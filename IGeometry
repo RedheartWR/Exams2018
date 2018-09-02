@@ -1,0 +1,84 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lib
+{
+    public interface IGeometry: IComparable
+    {
+        double Square { get; }
+        double Diameter { get; }
+
+        string ToString();
+    }
+
+    class Triangle : IGeometry
+    {
+        public double A { get; set; }
+        public double B { get; set; }
+        public double C { get; set; }
+
+        public Triangle(double a, double b, double c)
+        {
+            if ((a + b < c) || (a + c < b) || (b + c < a)) throw new ArgumentException();
+            if ((a <= 0) || (b <= 0) || (c <= 0)) throw new ArgumentException();
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public double Square
+        {
+            get
+            {
+                double p = (A + B + C) / 2;
+                return p * (p - A) * (p - B) * (p - C);
+            }
+        }
+
+        public double Diameter { get { return A; } }
+
+        public int CompareTo(object other)
+        {
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return "Triangle: " + A + ", " + B + ", " + C + ". Square: " + Square + ". Diameter: " + Diameter + ".\n";
+        }
+    }
+
+    class Circle : IGeometry
+    {
+        public Circle(double r)
+        {
+            if (r <= 0) throw new ArgumentException();
+        }
+
+        public double R { get; set; }
+
+        public double Square { get { return Math.PI * R * R; } }
+
+        public double Diameter { get { return R * 2; } }
+
+        public int CompareTo(object other)
+        {
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return "Circle: " + R + ". Square: " + Square + ". Diameter: " + Diameter + ".\n";
+        }
+    }
+
+    class ListOfFigures<T>: IGeometry where T: IGeometry
+    {
+        List<T> list;
+
+
+    }
+}
