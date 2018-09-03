@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lib
 {
-    public interface IGeometry: IComparable
+    public interface IGeometry<T>: IComparable<T>
     {
         double Square { get; }
         double Diameter { get; }
@@ -14,7 +14,7 @@ namespace Lib
         string ToString();
     }
 
-    class Triangle : IGeometry
+    class Triangle : IGeometry<Triangle>
     {
         public double A { get; set; }
         public double B { get; set; }
@@ -40,7 +40,7 @@ namespace Lib
 
         public double Diameter { get { return A; } }
 
-        public int CompareTo(object other)
+        public int CompareTo(Triangle other)
         {
             return 0;
         }
@@ -51,7 +51,7 @@ namespace Lib
         }
     }
 
-    class Circle : IGeometry
+    class Circle : IGeometry<Circle>
     {
         public Circle(double r)
         {
@@ -64,7 +64,7 @@ namespace Lib
 
         public double Diameter { get { return R * 2; } }
 
-        public int CompareTo(object other)
+        public int CompareTo(Circle other)
         {
             return 0;
         }
