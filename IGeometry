@@ -157,9 +157,8 @@ namespace Lib
         {
             if ((t <= 0) || (c <= 0)) throw new ArgumentException();
             Random r = new Random();
-            ListOfFigures<T> objs = new ListOfFigures<T>();
-            List<T> list = objs.list;
-            
+            List<T> list = new List<T>();
+            list.Add((T)(new Triangle(1, 2, 3)));
         }
     }
 }
