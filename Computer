@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Computer1
+{
+    public class Computer
+    {
+        private string id;
+        private int year;
+        private int cpuclock;
+        private int ram;
+
+        public string ID
+        {
+            get { return id; }
+            set
+            {
+                if (value.Length != 7) throw new FormatException(); ;
+                foreach (char a in value)
+                {
+                    if (!(((a <= 'Z') && (a >= 'A')) || ((a >= '0') && (a <= '9')))) throw new FormatException();
+                }
+                id = value;
+            }
+        }
+
+        public int Year
+        {
+            get { return year; }
+            set
+            {
+                if ((value < 2000) || (value > 2017)) throw new IndexOutOfRangeException();
+                year = value;
+            }
+        }
+
+        public int CPUClock
+        {
+            get { return cpuclock; }
+            set
+            {
+                if ((value < 100) || (value > 3500) || (value % 100 != 0)) throw new ExecutionEngineException();
+                cpuclock = value;
+            }
+        }
+
+        public int RAM
+        {
+            get { return ram; }
+            set
+            {
+                if ((value < 4) || (value > 16)) throw new InsufficientMemoryException();
+                ram = value;
+            }
+        }
+
+        public override string ToString()
+        {
+            return this.ID + '\t' + this.Year + '\t' + this.CPUClock + '\t' + this.RAM;
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using Computer1;
+
+namespace ComputerGenerator
+{
+    class Program
+    {
+        static void Main()
+        {
+            Random r = new Random();
+            using (StreamWriter fs = new StreamWriter(new FileStream(@"computers.txt", FileMode.OpenOrCreate)))
+            {
+                int count = r.Next(6) + 8;
+                for (int i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        Computer computer = new Computer();
+                        computer.ID = "B" + r.Next(10) + r.Next(10) + r.Next(10) 
+                            + r.Next(10) + r.Next(10) + r.Next(10);
+                        computer.Year = r.Next(2000, 2017);
+                        computer.CPUClock = r.Next(1, 35) * 100;
+                        computer.RAM = r.Next(4, 16);
+                        fs.WriteLine(computer.ToString());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using Computer1;
+
+namespace ComputerReports
+{
+    class Program
+    {
+        
+        static void Main(string[] args)
+        {
+            try
+            {
+                List<Computer> cs = new List<Computer>();
+                using (StreamReader s = new StreamReader
+                (new FileStream(@"computers.txt", FileMode.Open)))
+                {
+                    Computer c;
+                    string str = s.ReadLine();
+                    while (str != null)
+                    {
+                        string[] data = str.Split('\t');
+                        c = new Computer();
+                        c.ID = data[0];
+                        c.Year = int.Parse(data[1]);
+                        c.CPUClock = int.Parse(data[2]);
+                        c.RAM = int.Parse(data[3]);
+                        cs.Add(c);
+                        str = s.ReadLine();
+                    }
+                }
+
+                var cs_1 = from t in cs
+                           orderby t.Year
+                           select t;
+                foreach (Computer a in cs_1) Console.WriteLine(a.ToString());
+
+                Console.WriteLine("\n\n");
+
+                var cs_2 = from t in cs
+                           where ((t.RAM > 10) && (t.CPUClock > 1000))
+                           orderby t.ID
+                           select t;
+                foreach (Computer a in cs_2) Console.WriteLine(a.ToString());
+            }
+            catch (DirectoryNotFoundException) { }
+            catch (FileNotFoundException) { }
+            catch (IndexOutOfRangeException) { }
+        }
+    }
+}
